@@ -1,0 +1,47 @@
+{
+  "Description": "Outputs a hello world table",
+  "Parameters": {
+    "TableName": {
+      "Description": "Table name",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "DynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "customer_id",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "customer_id",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        },
+        "TableName": "${TableName}"
+      }
+    }
+  },
+  "Outputs": {
+    "DynamoDBTable": {
+      "Description": "Hopefully an output",
+      "Value": "DynamoDBTable"
+    }
+  }
+}
