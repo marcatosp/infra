@@ -1,0 +1,54 @@
+{
+  "Description": "Outputs an API",
+  "Parameters": {
+    "ApiGatewayStageName": {
+      "Description": "API endpoint name",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "ApiGateway": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "Test API",
+        "Description": "This is an API"
+      }
+    },
+
+    "ApiGatewayRootMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "MOCK"
+        },
+        "AuthorizationType": "NONE",
+        "HttpMethod": "POST",
+        "RestApiId": { "Ref": "ApiGateway" },
+        "ResourceId": {"Fn::GetAtt": [ "ApiGateway", "RootResourceId" ] }
+      }
+    },
+
+    "ApiGatewayDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": [
+        "ApiGatewayRootMethod"
+      ],
+      "Properties": {
+        "RestApiId": { "Ref": "ApiGateway" },
+        "StageName": { "Ref": "ApiGatewayStageName" }
+      }
+    }
+  },
+  "Outputs": {
+    "ApiGatewayInvokeUrl": {
+      "Description": "Hopefully an URL to call",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [ "https://", { "Ref": "ApiGateway" }, ".execute-api.", { "Ref": "AWS::Region" }, ".amazonaws.com" ]
+        ]
+      }
+    }
+  }
+}
